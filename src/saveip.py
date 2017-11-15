@@ -3,6 +3,9 @@ import requests
 #import pymongo
 import redis
 import os
+import datetime
+import re
+import time
 
 class Saveip(object):
     def __init__(self,):
@@ -128,6 +131,85 @@ class Saveip(object):
             self.dit['lastcheck'] = lastcheck
             yield self.dit
 
+    def get_66(self):
+        http_proxy_list = []
+        https_proxy_list = []
+        http_url = 'http://www.66ip.cn/nmtq.php?getnum=1000&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=0&proxytype=0&api=66ip'
+        https_url = 'http://www.66ip.cn/nmtq.php?getnum=1000&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=0&proxytype=1&api=66ip'
+        html = requests.get(http_url)
+        selector = etree.HTML(html.text)
+        http_proxys = selector.xpath('/html/body/text()')
+        del http_proxys[0]
+        for http_proxy in http_proxys:
+            http_proxy = re.sub(r'\r\n\t ]*','',http_proxy).strip()
+            http_proxy_list.append(http_proxy)
+        http_proxy_list = [http for http in http_proxy_list if http != '']
+        for http_proxy in http_proxy_list:
+            ip = http_proxy[:http_proxy.find(':'):]
+            port = http_proxy[http_proxy.find(':')+1:]
+            proxy_type = 'http'
+            lastcheck = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            self.ip_list.append(ip)
+            self.port_list.append(port)
+            self.type_list.append(proxy_type)
+            self.lastcheck_list.append(lastcheck)
+
+
+        time.sleep(5)
+        html = requests.get(https_url)
+        selector = etree.HTML(html.text)
+        https_proxys = selector.xpath('/html/body/text()')
+        del https_proxys[0]
+        for https_proxy in https_proxys:
+            https_proxy = re.sub(r'[\r\n\t ]*','',https_proxy)
+            https_proxy_list.append(https_proxy)
+        https_proxy_list = [https for https in https_proxy_list if https != '']
+        for https_proxy in https_proxy_list:
+            ip = https_proxy[:https_proxy.find(':')]
+            port = https_proxy[https_proxy.find(':')+1:]
+            proxy_type = 'https'
+            lastcheck = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            self.ip_list.append(ip)
+            self.port_list.append(port)
+            self.type_list.append(proxy_type)
+            self.lastcheck_list.append(lastcheck)
+
+        for ip,port,tp,lastcheck in zip(self.ip_list, self.port_list, self.type_list, self.lastcheck_list):
+            self.dit['ip'] = ip
+            self.dit['port'] = port
+            self.dit['type'] = tp
+            self.dit['lastcheck'] = lastcheck
+            yield self.dit
+
+    def get_89ip(self):
+        proxy_list = []
+        url = 'http://www.89ip.cn/tiqv.php?sxb=&tqsl=2000&ports=&ktip=&xl=on&submit=%CC%E1++%C8%A1'
+        html = requests.get(url)
+        selector = etree.HTML(html.text)
+        for i in range(2,2001):
+            proxy = selector.xpath("/html/body/div/text()["+str(i)+"]")
+            if proxy != [] and 'ip3366.net' not in proxy[0]:
+                proxy = re.sub(r'[\n\r ]*','',proxy[0])
+                proxy_list.append(proxy)
+        proxy_list = [proxy for proxy in proxy_list if proxy != '']
+        print(proxy_list)
+        for proxy in proxy_list:
+            ip = proxy[:proxy.find(':')]
+            port = proxy[proxy.find(':')+1:]
+            proxy_type = 'http'
+            lastcheck = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            self.ip_list.append(ip)
+            self.port_list.append(port)
+            self.type_list.append(proxy_type)
+            self.lastcheck_list.append(lastcheck)
+
+        for ip,port,tp,lastcheck in zip(self.ip_list, self.port_list, self.type_list, self.lastcheck_list):
+            self.dit['ip'] = ip
+            self.dit['port'] = port
+            self.dit['type'] = tp
+            self.dit['lastcheck'] = lastcheck
+            yield self.dit
+
     def save(self, data):
         #db = pymongo.MongoClient(host='127.0.0.1', port='27017')
         db = redis.Redis(host='127.0.0.1', port='6379', db=0)
@@ -147,5 +229,16 @@ if __name__ == '__main__':
     ip181_dit = p3.get_ip181()
     for data in ip181_dit:
         p3.save(data)
-
+    p4 = Saveip()
+    daili66_dit = p4.get_66()
+    for data in daili66_dit:
+        p4.save(data)
+    p5 = Saveip()
+    daili89_dit = p5.get_89ip()
+    for data in daili89_dit:
+        p5.save(data)
+    p6 = Saveip()
+    daili89_dit = p6.get_89ip()
+    for data in daili89_dit:
+        p6.save(data)
     os.popen('python ./checkip.py')
