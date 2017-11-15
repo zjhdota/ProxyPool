@@ -28,7 +28,7 @@ def check_ip():
         ip = ip[ip.find('//')+2:ip.rfind(':')]
         #print(ip)
         try:
-            html = requests.get('http://www.baidu.com', headers=headers, proxies=proxy, timeout=2)
+            html = requests.get('http://www.baidu.com', headers=headers, proxies=proxy, timeout=5)
         except:
             db.hset(ip, 'tag', 0)
         else:
