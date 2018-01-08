@@ -1,4 +1,4 @@
-from lxml import etree
+
 import requests
 #import pymongo
 import redis
@@ -6,7 +6,8 @@ import os
 import datetime
 import re
 import time
-
+import subprocess
+from lxml import etree
 class Saveip(object):
     def __init__(self,):
         self.session = requests.Session()
@@ -28,7 +29,7 @@ class Saveip(object):
         self.crawl_queue = []
 
     # 西刺代理
-    def get_xici(self):
+    def get_xici(self, source="www.xicidaili.com"):
         for n in range(1,3):
             url = 'http://www.xicidaili.com/nn/' + str(n)
             self.url.append(url)
@@ -57,10 +58,11 @@ class Saveip(object):
             self.dit["port"] = port
             self.dit["type"] = tp
             self.dit["lastcheck"] = '20' + lastcheck
+            self.dit["source"] = source
             yield self.dit
 
     # 快代理
-    def get_kuaidaili(self):
+    def get_kuaidaili(self, source="www.kuaidaili.com"):
         for n in range(1, 3):
             self.url.append('http://www.kuaidaili.com/free/inha/'+str(n)+'/')
         self.crawl_queue.extend(self.url)
@@ -91,10 +93,11 @@ class Saveip(object):
             self.dit['port'] = port
             self.dit['type'] = tp
             self.dit['lastcheck'] = lastcheck
+            self.dit["source"] = source
             yield self.dit
 
     #ip181
-    def get_ip181(self):
+    def get_ip181(self, source="www.ip181.com"):
         for n in range(1, 3):
             self.url.append('http://www.ip181.com/daili/'+str(n)+'.html')
         self.crawl_queue.extend(self.url)
@@ -129,9 +132,10 @@ class Saveip(object):
             self.dit['port'] = port
             self.dit['type'] = tp
             self.dit['lastcheck'] = lastcheck
+            self.dit["source"] = source
             yield self.dit
 
-    def get_66(self):
+    def get_66(self, source="www.66ip.cn"):
         http_proxy_list = []
         https_proxy_list = []
         http_url = 'http://www.66ip.cn/nmtq.php?getnum=1000&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=0&proxytype=0&api=66ip'
@@ -179,9 +183,10 @@ class Saveip(object):
             self.dit['port'] = port
             self.dit['type'] = tp
             self.dit['lastcheck'] = lastcheck
+            self.dit["source"] = source
             yield self.dit
 
-    def get_89ip(self):
+    def get_89ip(self, source="www.89ip.cn"):
         proxy_list = []
         url = 'http://www.89ip.cn/tiqv.php?sxb=&tqsl=2000&ports=&ktip=&xl=on&submit=%CC%E1++%C8%A1'
         html = requests.get(url)
@@ -192,7 +197,7 @@ class Saveip(object):
                 proxy = re.sub(r'[\n\r ]*','',proxy[0])
                 proxy_list.append(proxy)
         proxy_list = [proxy for proxy in proxy_list if proxy != '']
-        print(proxy_list)
+        #print(proxy_list)
         for proxy in proxy_list:
             ip = proxy[:proxy.find(':')]
             port = proxy[proxy.find(':')+1:]
@@ -208,11 +213,12 @@ class Saveip(object):
             self.dit['port'] = port
             self.dit['type'] = tp
             self.dit['lastcheck'] = lastcheck
+            self.dit["source"] = source
             yield self.dit
 
     def save(self, data):
         #db = pymongo.MongoClient(host='127.0.0.1', port='27017')
-        db = redis.Redis(host='127.0.0.1', port='6379', db=0)
+        db = redis.Redis(host='127.0.0.1', port=6379, db=0)
         #for k,v in self.dit.items():
         db.hmset(data['ip'], data)
 
@@ -241,4 +247,5 @@ if __name__ == '__main__':
     daili89_dit = p6.get_89ip()
     for data in daili89_dit:
         p6.save(data)
-    os.popen('python ./checkip.py')
+    #os.popen('python ./checkip.py')
+    subprocess.Popen("python ./checkip.py",shell=True)

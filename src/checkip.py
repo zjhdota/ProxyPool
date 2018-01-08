@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 import threading
-from queue import Queue
 import redis
 import requests
 import time
@@ -8,7 +7,7 @@ import logging
 import datetime
 from dateutil import rrule
 from dateutil import parser
-
+from queue import Queue
 class MyThread(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
@@ -45,7 +44,7 @@ def checking(queue):
         else:
             db.hset(hash_name, 'tag', 1)
             logging.info('{}://{}:{} , HTTP state code: {}'.format(tp, ip, port, html.status_code))
-        time.sleep(5)
+        #time.sleep(5)
         queue.task_done()
 
 logging.basicConfig(level=logging.INFO,
@@ -65,7 +64,7 @@ hash_name_list = [num.decode('ascii') for num in db.keys('*')]
 queue = Queue(len(hash_name_list))
 #print(len(hash_name_list))
 threads = []
-for i in range(5):
+for i in range(200):
     t = MyThread(queue)
     threads.append(t)
     t.setDaemon(True)
