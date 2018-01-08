@@ -8,6 +8,7 @@ import datetime
 from dateutil import rrule
 from dateutil import parser
 from queue import Queue
+from logging.handlers import RotatingFileHandler
 class MyThread(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
@@ -50,14 +51,20 @@ def checking(queue):
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='checkip.log',
-                filemode='a+')
-
+                #filename='checkip.log',
+                #filemode='a+'
+                )
 console = logging.StreamHandler()
 console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(name)-8s: %(levelname)-8s %(message)s')
+formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
 console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
+
+Rthandler = RotatingFileHandler('checkip.log', maxBytes=100*1024*1024,backupCount=5)
+Rthandler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
+Rthandler.setFormatter(formatter)
+logging.getLogger('').addHandler(Rthandler)
 
 db = redis.Redis(host='127.0.0.1', port=6379, db=0)
 hash_name_list = [num.decode('ascii') for num in db.keys('*')]
