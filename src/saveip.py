@@ -135,6 +135,7 @@ class Saveip(object):
             self.dit["source"] = source
             yield self.dit
 
+    #66代理
     def get_66(self, source="www.66ip.cn"):
         http_proxy_list = []
         https_proxy_list = []
@@ -186,6 +187,7 @@ class Saveip(object):
             self.dit["source"] = source
             yield self.dit
 
+    #89ip
     def get_89ip(self, source="www.89ip.cn"):
         proxy_list = []
         url = 'http://www.89ip.cn/tiqv.php?sxb=&tqsl=2000&ports=&ktip=&xl=on&submit=%CC%E1++%C8%A1'
