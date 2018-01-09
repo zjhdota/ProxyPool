@@ -241,13 +241,9 @@ if __name__ == '__main__':
     daili66_dit = p4.get_66()
     for data in daili66_dit:
         p4.save(data)
-    p5 = Saveip()
-    daili89_dit = p5.get_89ip()
-    for data in daili89_dit:
-        p5.save(data)
-    p6 = Saveip()
-    daili89_dit = p6.get_89ip()
-    for data in daili89_dit:
-        p6.save(data)
+    #p5 = Saveip()
+    #daili89_dit = p5.get_89ip()
+    #for data in daili89_dit:
+        #p5.save(data)
     #os.popen('python ./checkip.py')
     subprocess.Popen("python ./checkip.py",shell=True)
