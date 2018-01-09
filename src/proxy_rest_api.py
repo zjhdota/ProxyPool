@@ -30,6 +30,7 @@ def getproxys(proxys = []):
              'source':source
          }
          proxys.append(proxy)
+     return proxys
 
 '''
 @auth.get_password
@@ -44,25 +45,25 @@ def unauthorized():
 '''
 @app.route('/', methods=['GET'])
 def get_proxy():
-    getproxys()
+    proxys = getproxys()
     proxy = list(random.choice(proxys, 1))
     return jsonify({'proxys':proxy})
 
 @app.route('/proxy', methods=['GET'])
 def get_proxy2():
-    getproxys()
+    proxys = getproxys()
     proxy = list(random.choice(proxys, 1))
     return jsonify({'proxys':proxy})
 
 
 @app.route('/proxys', methods=['GET'])
 def get_proxys():
-    getproxys()
+    proxys = getproxys()
     return jsonify({'proxys':proxys})
 
 @app.route('/proxys/<int:num>', methods=['GET'])
 def get_proxys_num(num):
-    getproxys()
+    proxys = getproxys()
     if len(proxys) < num:
         abort(404)
     proxy_num = list(random.choice(proxys, num))
