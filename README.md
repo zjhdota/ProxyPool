@@ -7,7 +7,7 @@
 + [快代理](http://www.kuaidaili.com/free/)
 + [ip181](http://www.ip181.com/)
 + [66代理](http://www.66ip.cn/nm.html)
-+ [89ip](http://www.89ip.cn/)
++ [89ip(暂时失效)](http://www.89ip.cn/)
 
 ## 运行环境 ##
 + [Python3.x](https://www.python.org/)
@@ -38,3 +38,22 @@ html = requests.get('http://www.baidu.com', proxies=getip.get_ip(), headers=head
 print(html.status_code)
 ```
 
+## 2018/1/9更新 ##
+用flask写了个RESTful api用于获取代理信息
+
+1. 返还随机一个可用的代理信息
+```
+GET http://127.0.0.1:5000
+```
+或者
+```
+GET http://127.0.0.1:5000/proxy
+```
+2. 返还所有可用的代理信息
+```
+GET http://127.0.0.1:5000/proxys
+```
+3. 随机返还num数量的可用代理信息
+```
+GET http://127.0.0.1:5000/proxys/<int:num>
+```
