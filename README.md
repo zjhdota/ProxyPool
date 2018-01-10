@@ -22,6 +22,7 @@
 + [saveip.py](src/saveip.py): 用来请求网页并存储代理信息到Redis
 + [checkip.py](src/checkip.py): 用来检测Redis中的代理是否有效
 + [getip.py](src/getip.py): 用来获取Redis中可用的代理
++ [proxy_rest_api.py](src/proxy_rest_api.py): 用来获取代理的API文件
 + [testip.py](src/testip.py): 测试文件
 
 ## 使用方法 ##
