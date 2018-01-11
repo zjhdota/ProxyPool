@@ -55,11 +55,11 @@ logging.basicConfig(level=logging.INFO,
                 #filename='checkip.log',
                 #filemode='a+'
                 )
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
-console.setFormatter(formatter)
-logging.getLogger('').addHandler(console)
+#console = logging.StreamHandler()
+#console.setLevel(logging.INFO)
+#formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
+#console.setFormatter(formatter)
+#logging.getLogger('').addHandler(console)
 
 Rthandler = RotatingFileHandler('checkip.log', maxBytes=100*1024*1024,backupCount=5)
 Rthandler.setLevel(logging.INFO)
