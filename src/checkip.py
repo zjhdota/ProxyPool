@@ -35,8 +35,9 @@ def checking(queue):
         proxies = {
             tp: tp+'://'+ip+':'+port,
         }
+        url = tp+'://www.baidu.com/'
         try:
-            html = requests.get('http://www.baidu.com/', proxies=proxies, headers=headers, timeout=2)
+            html = requests.get(url, proxies=proxies, headers=headers, timeout=2)
         except Exception as e:
             logging.info("{}://{}:{},{}".format(tp, ip, port, e))
             db.hset(hash_name, 'tag', 0)

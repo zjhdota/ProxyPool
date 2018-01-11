@@ -39,7 +39,7 @@ html = requests.get('http://www.baidu.com', proxies=getip.get_ip(), headers=head
 print(html.status_code)
 ```
 
-## 2018/1/9更新 ##
+## api接口 ##
 用flask写了个RESTful api用于获取代理信息
 
 1. 返还随机一个可用的代理信息
@@ -50,11 +50,35 @@ GET http://127.0.0.1:5000
 ```
 GET http://127.0.0.1:5000/proxy
 ```
-2. 返还所有可用的代理信息
+2. 返还随机一个可用的http代理信息
+```
+GET http://127.0.0.1:5000/proxy/http
+```
+3. 返还随机一个可用的https代理信息
+```
+GET http://127.0.0.1:5000/proxy/https
+```
+4. 返还所有可用的代理信息
 ```
 GET http://127.0.0.1:5000/proxys
 ```
-3. 随机返还num数量的可用代理信息
+5. 返还所有可用的http代理信息
+```
+GET http://127.0.0.1:5000/proxys/http
+```
+6. 返还所有可用的https代理信息
+```
+GET http://127.0.0.1:5000/proxys/https
+```
+7. 随机返还num数量的可用代理信息
 ```
 GET http://127.0.0.1:5000/proxys/<int:num>
+```
+8. 随机返还num数量的可用的http代理信息
+```
+GET http://127.0.0.1:5000/proxys/http/<int:num>
+```
+9. 随机返还num数量的可用的https代理信息
+```
+GET http://127.0.0.1:5000/proxys/https/<int:num>
 ```
