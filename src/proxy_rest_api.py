@@ -31,8 +31,9 @@ def getproxys():
          'source':source
         }
         proxys.append(proxy)
-        return proxys
-def getproxysbytype(bytytp="http"):
+    return proxys
+
+def getproxysbytype(bytype="http"):
     proxys = []
     db = redis.Redis(host='127.0.0.1', port=6379, db=0)
     hash_name_list = [num.decode('ascii') for num in db.keys('*')]
@@ -41,7 +42,7 @@ def getproxysbytype(bytytp="http"):
         if tag == '0':
             continue
         tp = db.hget(ip,'type').decode('ascii').lower()
-        if tp != bytytp:
+        if bytype != tp:
             continue
         port = db.hget(ip,'port').decode('ascii')
         lastcheck = db.hget(ip,'lastcheck').decode('ascii')
@@ -57,7 +58,7 @@ def getproxysbytype(bytytp="http"):
          'source':source
         }
         proxys.append(proxy)
-        return proxys
+    return proxys
 '''
 @auth.get_password
 def get_password(username):
@@ -94,7 +95,7 @@ def get_one_http_proxy():
 
 @app.route('/proxy/https', methods=['GET'])
 def get_one_https_proxy():
-    proxys = getproxysbytype(bytytp='https')
+    proxys = getproxysbytype(bytype='https')
     proxy = list(random.choice(proxys, 1))
     return jsonify({'proxys':proxy})
 
@@ -105,7 +106,7 @@ def get_all_http_proxy():
 
 @app.route('/proxys/https', methods=['GET'])
 def get_all_https_proxy():
-    proxys = getproxysbytype(bytytp='https')
+    proxys = getproxysbytype(bytype='https')
     return jsonify({'proxys':proxys})
 
 @app.route('/proxys/<int:num>', methods=['GET'])
