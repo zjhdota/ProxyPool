@@ -30,7 +30,7 @@ class Saveip(object):
 
     # 西刺代理
     def get_xici(self, source="www.xicidaili.com"):
-        for n in range(1,3):
+        for n in range(1,5):
             url = 'http://www.xicidaili.com/nn/' + str(n)
             self.url.append(url)
         self.crawl_queue.extend(self.url)
@@ -142,6 +142,7 @@ class Saveip(object):
         http_url = 'http://www.66ip.cn/nmtq.php?getnum=1000&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=0&proxytype=0&api=66ip'
         https_url = 'http://www.66ip.cn/nmtq.php?getnum=1000&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=0&proxytype=1&api=66ip'
         html = requests.get(http_url)
+        html.encoding = 'gb2312'
         selector = etree.HTML(html.text)
         http_proxys = selector.xpath('/html/body/text()')
         del http_proxys[0]
@@ -162,6 +163,7 @@ class Saveip(object):
 
         time.sleep(5)
         html = requests.get(https_url)
+        html.encoding = 'gb2312'
         selector = etree.HTML(html.text)
         https_proxys = selector.xpath('/html/body/text()')
         del https_proxys[0]
@@ -192,10 +194,11 @@ class Saveip(object):
         proxy_list = []
         url = 'http://www.89ip.cn/tiqv.php?sxb=&tqsl=2000&ports=&ktip=&xl=on&submit=%CC%E1++%C8%A1'
         html = requests.get(url)
+        html.encoding = 'gb2312'
         selector = etree.HTML(html.text)
         for i in range(2,2001):
             proxy = selector.xpath("/html/body/div/text()["+str(i)+"]")
-            if proxy != [] and 'ip3366.net' not in proxy[0]:
+            if proxy != [] and 'ip3366.net' not in proxy[0] and '筛选条件' not in proxy[0]:
                 proxy = re.sub(r'[\n\r ]*','',proxy[0])
                 proxy_list.append(proxy)
         proxy_list = [proxy for proxy in proxy_list if proxy != '']
@@ -209,6 +212,80 @@ class Saveip(object):
             self.port_list.append(port)
             self.type_list.append(proxy_type)
             self.lastcheck_list.append(lastcheck)
+
+        for ip,port,tp,lastcheck in zip(self.ip_list, self.port_list, self.type_list, self.lastcheck_list):
+            self.dit['ip'] = ip
+            self.dit['port'] = port
+            self.dit['type'] = tp
+            self.dit['lastcheck'] = lastcheck
+            self.dit["source"] = source
+            yield self.dit
+
+    # 开心代理
+    def get_kaixindaili(self, source="www.kxdaili.com"):
+        url = "http://www.kxdaili.com/dailiip/1/2.html#ip"
+        for n in range(1, 11):
+            self.url.append('http://www.kxdaili.com/dailiip/1/'+str(n)+'.html#ip')
+        self.crawl_queue.extend(self.url)
+        while self.crawl_queue:
+            url = self.crawl_queue.pop()
+            try:
+                html = self.session.get(url)
+                #html.encoding = 'gb2312'
+            except:
+                #self.crawl_queue.append(url)
+                print('kaixindaili: {}网址暂时不可用'.format(url))
+            else:
+                selector = etree.HTML(html.text)
+                for i in range(1,10):
+                    ip = selector.xpath('//div[@class="tab_c_box buy_tab_box"]/table/tbody/tr['+str(i)+']/td[1]/text()')[0]
+                    #print(ip)
+                    self.ip_list.append(ip)
+                    port = selector.xpath('//div[@class="tab_c_box buy_tab_box"]/table/tbody/tr['+str(i)+']/td[2]/text()')[0]
+                    self.port_list.append(port)
+                    tp = selector.xpath('//div[@class="tab_c_box buy_tab_box"]/table/tbody/tr['+str(i)+']/td[4]/text()')[0]
+                    if "HTTPS" in tp:
+                        tp = tp[tp.find(',')+1:]
+                    self.type_list.append(tp)
+                    lastcheck = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    self.lastcheck_list.append(lastcheck)
+
+        for ip,port,tp,lastcheck in zip(self.ip_list, self.port_list, self.type_list, self.lastcheck_list):
+            self.dit['ip'] = ip
+            self.dit['port'] = port
+            self.dit['type'] = tp
+            self.dit['lastcheck'] = lastcheck
+            self.dit["source"] = source
+            yield self.dit
+
+    # ip3366代理
+    def get_ip3366(self, source="www.ip3366.net"):
+        url = "http://www.ip3366.net/?stype=1&page=1"
+        for n in range(1, 4):
+            self.url.append('http://www.ip3366.net/?stype=1&page='+str(n))
+        self.crawl_queue.extend(self.url)
+        while self.crawl_queue:
+            url = self.crawl_queue.pop()
+            try:
+                html = self.session.get(url)
+                #html.encoding = 'gb2312'
+            except:
+                #self.crawl_queue.append(url)
+                print('ip3366: {}网址暂时不可用'.format(url))
+            else:
+                selector = etree.HTML(html.text)
+                for i in range(1,11):
+                    ip = selector.xpath('//*[@id="list"]/table/tbody/tr['+str(i)+']/td[1]/text()')[0]
+                    #print(ip)
+                    self.ip_list.append(ip)
+                    port = selector.xpath('//*[@id="list"]/table/tbody/tr['+str(i)+']/td[2]/text()')[0]
+                    self.port_list.append(port)
+                    tp = selector.xpath('//*[@id="list"]/table/tbody/tr['+str(i)+']/td[4]/text()')[0]
+                    if "HTTPS" in tp:
+                        tp = tp[tp.find(',')+1:]
+                    self.type_list.append(tp)
+                    lastcheck = selector.xpath('//*[@id="list"]/table/tbody/tr['+str(i)+']/td[8]/text()')[0]
+                    self.lastcheck_list.append(lastcheck)
 
         for ip,port,tp,lastcheck in zip(self.ip_list, self.port_list, self.type_list, self.lastcheck_list):
             self.dit['ip'] = ip
@@ -241,9 +318,17 @@ if __name__ == '__main__':
     daili66_dit = p4.get_66()
     for data in daili66_dit:
         p4.save(data)
-    #p5 = Saveip()
-    #daili89_dit = p5.get_89ip()
-    #for data in daili89_dit:
-        #p5.save(data)
+    p5 = Saveip()
+    daili89_dit = p5.get_89ip()
+    for data in daili89_dit:
+        p5.save(data)
+    p6 = Saveip()
+    kaixindaili_dit = p6.get_kaixindaili()
+    for data in kaixindaili_dit:
+        p6.save(data)
+    p7 = Saveip()
+    ip3366_dit = p7.get_ip3366()
+    for data in ip3366_dit:
+        p7.save(data)
     #os.popen('python ./checkip.py')
     subprocess.Popen("python ./checkip.py",shell=True)

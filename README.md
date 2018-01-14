@@ -7,7 +7,9 @@
 + [快代理](http://www.kuaidaili.com/free/)
 + [ip181](http://www.ip181.com/)
 + [66代理](http://www.66ip.cn/nm.html)
-+ [89ip(暂时失效)](http://www.89ip.cn/)
++ [89ip](http://www.89ip.cn/)
++ [开心代理](http://www.kxdaili.com/)
++ [ip3366代理](http://www.ip3366.net/)
 
 ## 运行环境 ##
 + [Python3.x](https://www.python.org/)
