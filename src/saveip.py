@@ -30,6 +30,15 @@ class Saveip(object):
 
     # 西刺代理
     def get_xici(self, source="www.xicidaili.com"):
+        headers ={
+        'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Encoding':'gzip, deflate',
+        'Accept-Language':'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Connection':'keep-alive',
+        'Host':'www.xicidaili.com',
+        'Upgrade-Insecure-Requests':'1',
+        'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        }
         for n in range(1,5):
             url = 'http://www.xicidaili.com/nn/' + str(n)
             self.url.append(url)
@@ -37,7 +46,9 @@ class Saveip(object):
         while self.crawl_queue:
             url = self.crawl_queue.pop()
             try:
-                html = self.session.get(url)
+                html = self.session.get(url,headers=headers)
+                if 'block' in html.text:
+                    return
             except:
                 #self.crawl_queue.append(url)
                 print('西刺代理: {}网址暂时不可用'.format(url))
@@ -231,6 +242,7 @@ class Saveip(object):
             url = self.crawl_queue.pop()
             try:
                 html = self.session.get(url)
+                #print(html.txt)
                 #html.encoding = 'gb2312'
             except:
                 #self.crawl_queue.append(url)

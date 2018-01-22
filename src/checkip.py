@@ -9,6 +9,7 @@ from dateutil import rrule
 from dateutil import parser
 from queue import Queue
 from logging.handlers import RotatingFileHandler
+
 class MyThread(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
